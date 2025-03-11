@@ -13,6 +13,13 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField]
     private int _mazeDepth;
+    
+    [SerializeField]
+    private float _scaleFactorX = 2f; // Scaling factor for X axis
+    [SerializeField]
+    private float _scaleFactorY = 1f; // Scaling factor for Y axis
+    [SerializeField]
+    private float _scaleFactorZ = 2f; // Scaling factor for Z axis
 
     private MazeCell[,] _mazeGrid;
 
@@ -24,7 +31,13 @@ public class MazeGenerator : MonoBehaviour
         {
             for (int z = 0; z < _mazeDepth; z++)
             {
-                MazeCell mazeCell = Instantiate(_mazeCellPrefab, new Vector3(x, 0, z), Quaternion.identity);
+                // Position the cells properly based on the individual scale factors
+                Vector3 position = new Vector3(x * _scaleFactorX, 0, z * _scaleFactorZ);
+
+                // Instantiate maze cell and scale it for visual representation
+                MazeCell mazeCell = Instantiate(_mazeCellPrefab, position, Quaternion.identity);
+                mazeCell.transform.localScale = new Vector3(_scaleFactorX, _scaleFactorY, _scaleFactorZ);
+
                 _mazeGrid[x, z] = mazeCell;
             }
         }
@@ -49,8 +62,6 @@ public class MazeGenerator : MonoBehaviour
     {
         currentCell.Visit();
         ClearWalls(previousCell, currentCell);
-
-        //yield return new WaitForSeconds(0.05f);
 
         while (true)
         {
@@ -77,9 +88,11 @@ public class MazeGenerator : MonoBehaviour
     {
         List<MazeCell> unvisitedCells = new List<MazeCell>();
 
-        int x = (int)currentCell.transform.position.x;
-        int z = (int)currentCell.transform.position.z;
+        // Use grid indices (x, z) for logic, accounting for scaling
+        int x = Mathf.FloorToInt(currentCell.transform.position.x / _scaleFactorX);
+        int z = Mathf.FloorToInt(currentCell.transform.position.z / _scaleFactorZ);
 
+        // Check the four possible neighboring cells
         if (x + 1 < _mazeWidth && !_mazeGrid[x + 1, z].IsVisited)
             unvisitedCells.Add(_mazeGrid[x + 1, z]);
 
@@ -100,28 +113,34 @@ public class MazeGenerator : MonoBehaviour
         if (previousCell == null)
             return;
 
-        if (previousCell.transform.position.x < currentCell.transform.position.x)
+        // Use grid indices (x, z) for logic to remove walls
+        int prevX = Mathf.FloorToInt(previousCell.transform.position.x / _scaleFactorX);
+        int prevZ = Mathf.FloorToInt(previousCell.transform.position.z / _scaleFactorZ);
+        int currX = Mathf.FloorToInt(currentCell.transform.position.x / _scaleFactorX);
+        int currZ = Mathf.FloorToInt(currentCell.transform.position.z / _scaleFactorZ);
+
+        if (prevX < currX)
         {
             previousCell.RemoveWall(MazeCell.Direction.Right);
             currentCell.RemoveWall(MazeCell.Direction.Left);
             return;
         }
 
-        if (previousCell.transform.position.x > currentCell.transform.position.x)
+        if (prevX > currX)
         {
             previousCell.RemoveWall(MazeCell.Direction.Left);
             currentCell.RemoveWall(MazeCell.Direction.Right);
             return;
         }
 
-        if (previousCell.transform.position.z < currentCell.transform.position.z)
+        if (prevZ < currZ)
         {
             previousCell.RemoveWall(MazeCell.Direction.Front);
             currentCell.RemoveWall(MazeCell.Direction.Back);
             return;
         }
 
-        if (previousCell.transform.position.z > currentCell.transform.position.z)
+        if (prevZ > currZ)
         {
             previousCell.RemoveWall(MazeCell.Direction.Back);
             currentCell.RemoveWall(MazeCell.Direction.Front);

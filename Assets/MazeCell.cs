@@ -29,6 +29,7 @@ public class MazeCell : MonoBehaviour
         _rightRenderer = GetWallRenderer(_rightWall);
         _frontRenderer = GetWallRenderer(_frontWall);
         _backRenderer = GetWallRenderer(_backWall);
+        SetCellType(CellType.Default);
     }
 
     private Renderer GetWallRenderer(GameObject wall)
