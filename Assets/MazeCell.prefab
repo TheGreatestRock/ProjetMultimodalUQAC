@@ -420,7 +420,7 @@ MonoBehaviour:
   _frontWall: {fileID: 4501766416567196977}
   _backWall: {fileID: 7225738842067870384}
   _unvisitedBlock: {fileID: 4112601621180427074}
-  _DefaultMaterial: {fileID: 2100000, guid: fc2fd0eb7423cbf45ae031339c9f5bcc, type: 2}
+  _DefaultMaterial: {fileID: 2100000, guid: 13b072ea9d8b5b44788063048a83cde2, type: 2}
   _StartMaterial: {fileID: 2100000, guid: e0c32d3be68a4f8479eb7752e3054bb4, type: 2}
   _EndMaterial: {fileID: 2100000, guid: a60a3f4d9dec6724290f168213afc788, type: 2}
 --- !u!1 &6342594520522178701
