@@ -7,30 +7,41 @@ public class FreeCamera : MonoBehaviour
 
     private float rotationX = 0f;
     private float rotationY = 0f;
+    private bool isInteractingWithUI = false;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked; 
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
-        float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
-        float moveZ = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-        float moveY = 0f;
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isInteractingWithUI = !isInteractingWithUI;
+            Cursor.lockState = isInteractingWithUI ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = isInteractingWithUI;
+        }
 
-        if (Input.GetKey(KeyCode.Space)) moveY = moveSpeed * Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftControl)) moveY = -moveSpeed * Time.deltaTime;
+        if (!isInteractingWithUI)
+        {
+            float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
+            float moveZ = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+            float moveY = 0f;
 
-        transform.Translate(new Vector3(moveX, moveY, moveZ));
+            if (Input.GetKey(KeyCode.Space)) moveY = moveSpeed * Time.deltaTime;
+            if (Input.GetKey(KeyCode.LeftControl)) moveY = -moveSpeed * Time.deltaTime;
 
-        rotationX += Input.GetAxis("Mouse X") * lookSpeed;
-        rotationY -= Input.GetAxis("Mouse Y") * lookSpeed;
-        rotationY = Mathf.Clamp(rotationY, -90f, 90f);
+            transform.Translate(new Vector3(moveX, moveY, moveZ));
 
-        transform.rotation = Quaternion.Euler(rotationY, rotationX, 0);
-        
+            rotationX += Input.GetAxis("Mouse X") * lookSpeed;
+            rotationY -= Input.GetAxis("Mouse Y") * lookSpeed;
+            rotationY = Mathf.Clamp(rotationY, -90f, 90f);
+
+            transform.rotation = Quaternion.Euler(rotationY, rotationX, 0);
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;

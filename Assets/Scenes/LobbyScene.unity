@@ -262,7 +262,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -625,7 +625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!136 &1391776040
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -751,7 +751,9 @@ MonoBehaviour:
   - "Vibration al\xE9atoire"
   - Vibration rythmique
   - "Vibration d\xE9pendante de la vitesse"
-  WallType: 0
+  PossibleWalls:
+  - noir et blanc
+  - RGB
 --- !u!4 &1903861505
 Transform:
   m_ObjectHideFlags: 0
@@ -966,10 +968,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8609062833531869075, guid: fd1ff09d473150246876b8a4cf21227b, type: 3}
-      propertyPath: TextBoxPrefab
-      value: 
-      objectReference: {fileID: 4526651147888908462, guid: 6ad69827ad2ef65439e475d3d95d12a9, type: 3}
     - target: {fileID: 8609062833531869075, guid: fd1ff09d473150246876b8a4cf21227b, type: 3}
       propertyPath: _scaleFactorX
       value: 1.5

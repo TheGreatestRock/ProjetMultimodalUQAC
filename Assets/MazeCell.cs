@@ -18,6 +18,18 @@ public class MazeCell : MonoBehaviour
     private Renderer _frontRenderer;
     private Renderer _backRenderer;
 
+    //enum of the different wall types
+    public enum WallType
+    {
+        BlackAndWhite = 0,
+        RGB = 1,
+        Start = 2,
+        End = 3
+    }
+    
+    //current wall type
+    public WallType _currentWallType = WallType.BlackAndWhite;
+
     public bool IsVisited { get; private set; }
 
     public enum Direction { Left, Right, Front, Back }
@@ -79,6 +91,28 @@ public class MazeCell : MonoBehaviour
         ApplyMaterial(_rightRenderer, cellType);
         ApplyMaterial(_frontRenderer, cellType);
         ApplyMaterial(_backRenderer, cellType);
+        if (cellType == CellType.Start)
+        {
+            _currentWallType = WallType.Start;
+        }
+        else if (cellType == CellType.End)
+        {
+            _currentWallType = WallType.End;
+        }
+        else
+        {
+            _currentWallType = UserSessionManager.Instance.WallType;
+        }
+    }
+
+    public void SetDefaultMaterial(Material material)
+    {
+        if (material == null) return;
+        _DefaultMaterial = material;
+        ApplyMaterial(_leftRenderer, CellType.Default);
+        ApplyMaterial(_rightRenderer, CellType.Default);
+        ApplyMaterial(_frontRenderer, CellType.Default);
+        ApplyMaterial(_backRenderer, CellType.Default);
     }
 
     private void ApplyMaterial(Renderer renderer, CellType cellType)

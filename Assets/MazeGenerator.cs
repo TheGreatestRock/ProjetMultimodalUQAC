@@ -21,6 +21,12 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField]
     private float _scaleFactorZ = 2f; // Scaling factor for Z axis
 
+    [SerializeField]
+    private GameObject questionnairePrefab;
+    
+    [SerializeField]
+    private GameObject TextBoxPrefab;
+    
     private MazeCell[,] _mazeGrid;
 
     IEnumerator Start()
@@ -37,7 +43,7 @@ public class MazeGenerator : MonoBehaviour
                 // Instantiate maze cell and scale it for visual representation
                 MazeCell mazeCell = Instantiate(_mazeCellPrefab, position, Quaternion.identity);
                 mazeCell.transform.localScale = new Vector3(_scaleFactorX, _scaleFactorY, _scaleFactorZ);
-
+                mazeCell._currentWallType = UserSessionManager.Instance.WallType;
                 _mazeGrid[x, z] = mazeCell;
             }
         }
@@ -49,14 +55,78 @@ public class MazeGenerator : MonoBehaviour
 
     private void SetStartAndEnd()
     {
+        // Start
         MazeCell startCell = _mazeGrid[0, 0];
         startCell.SetCellType(MazeCell.CellType.Start);
         startCell.RemoveWall(MazeCell.Direction.Left);
-        
+        SpawnGameObjectAboveCell(startCell, questionnairePrefab);
+        SpawnGameObjectAboveCell(startCell, TextBoxPrefab);
+
+        // Middle
+        int midX = _mazeWidth / 2;
+        int midZ = _mazeDepth / 2;
+        MazeCell middleCell = _mazeGrid[midX, midZ];
+        SpawnGameObjectAboveCell(middleCell, questionnairePrefab);
+
+        // End
         MazeCell endCell = _mazeGrid[_mazeWidth - 1, _mazeDepth - 1];
         endCell.SetCellType(MazeCell.CellType.End);
         endCell.RemoveWall(MazeCell.Direction.Right);
+        SpawnGameObjectAboveCell(endCell, questionnairePrefab);
+        SpawnGameObjectAboveCell(endCell, TextBoxPrefab);
+
     }
+
+    private void SpawnGameObjectAboveCell(MazeCell cell, GameObject prefab)
+    {
+        GameObject obj;
+        if (prefab == null || cell == null)
+            return;
+        if (prefab == questionnairePrefab)
+        {
+            Vector3 spawnPosition = cell.transform.position + new Vector3(0, 1.5f, 0); // 1.5f units above the cell
+            obj = Instantiate(questionnairePrefab, spawnPosition, Quaternion.identity);
+        }
+        else if (prefab == TextBoxPrefab)
+        {
+            TextBoxController textBoxController;
+            if (cell._currentWallType == MazeCell.WallType.Start)
+            {
+                //log 
+                Debug.Log("Start cell");
+                Vector3 spawnPosition = cell.transform.position + new Vector3(-1.5f, 1.5f, 0); // 1.5f units above the cell
+                obj = Instantiate(TextBoxPrefab, spawnPosition, Quaternion.identity);
+                textBoxController = obj.GetComponent<TextBoxController>();
+                textBoxController.topText.text = "Welcome to the Maze!, you will need to answer a questionnaire in the middle of the maze and at the end of the maze. \n\n you can choose the wall type you want before starting";
+                textBoxController.button1Text.text = "Black and White";
+                textBoxController.button3Text.text = "RGB";
+                textBoxController.button2.gameObject.SetActive(false);
+                textBoxController.action1.actionType = TextBoxController.ButtonActionType.ChangeMaterial;
+                textBoxController.action1.parameter = MazeCell.WallType.BlackAndWhite.ToString();
+                textBoxController.action3.actionType = TextBoxController.ButtonActionType.ChangeMaterial;
+                textBoxController.action3.parameter = MazeCell.WallType.RGB.ToString();
+            }
+            else if (cell._currentWallType == MazeCell.WallType.End)
+            {
+                Debug.Log("End cell");
+                Vector3 spawnPosition = cell.transform.position + new Vector3(1.5f, 1.5f, 0); // 1.5f units above the cell
+                obj = Instantiate(TextBoxPrefab, spawnPosition, Quaternion.identity);
+                textBoxController = obj.GetComponent<TextBoxController>();
+                textBoxController.topText.text = "Congratulations! You have reached the end of the maze. \n\n you can choose to take a break, continue with the next maze or quit the game";
+                textBoxController.button1Text.text = "Take a break";
+                textBoxController.button2Text.text = "Continue";
+                textBoxController.button3Text.text = "Quit";
+                textBoxController.action1.actionType = TextBoxController.ButtonActionType.Pause;
+                textBoxController.action1.parameter = "Pause";
+                textBoxController.action2.actionType = TextBoxController.ButtonActionType.ChangeScene;
+                textBoxController.action2.parameter =  UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                textBoxController.action3.actionType = TextBoxController.ButtonActionType.Quit;
+                textBoxController.action3.parameter = "Quit";
+            }
+        }
+        
+    }
+
 
     private IEnumerator GenerateMaze(MazeCell previousCell, MazeCell currentCell)
     {
