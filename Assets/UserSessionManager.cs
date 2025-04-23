@@ -15,6 +15,9 @@ public class UserSessionManager : MonoBehaviour
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
     public TimeSpan Duration { get; private set; }
+    
+    public DateTime QuestionnaireStartTime { get; private set; }
+    public TimeSpan QuestionnaireDuration { get; private set; }
 
     private void Awake()
     {
@@ -47,13 +50,26 @@ public class UserSessionManager : MonoBehaviour
         StartTime = DateTime.Now;
         Duration = TimeSpan.Zero;
     }
+
+    public void StartQuestionnaire()
+    {
+        QuestionnaireStartTime = DateTime.Now;
+        Debug.Log("Questionnaire commencé");
+    }
+    
+    public void EndQuestionnaire()
+    {
+        QuestionnaireDuration += DateTime.Now - StartTime;
+        Debug.Log($"Questionnaire terminé - Durée: {QuestionnaireDuration.TotalSeconds} secondes");
+    }
     
     public void EndSession()
     {
         // remove the chosen vibration from it's arrays
         PossibleVibrations = Array.FindAll(PossibleVibrations, v => v != VibrationType);
         EndTime = DateTime.Now;
-        Duration = EndTime - StartTime;
-        Debug.Log($"Session terminée - Durée: {Duration.TotalSeconds} secondes");
+        Duration = EndTime - StartTime - QuestionnaireDuration;
+        QuestionnaireDuration = TimeSpan.Zero;
+        Debug.Log($"Session terminée - Durée: {Duration.TotalSeconds} secondes sans les questionnaires");
     }
 }

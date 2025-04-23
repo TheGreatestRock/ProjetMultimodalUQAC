@@ -1,3 +1,4 @@
+using Unity.Properties;
 using UnityEngine;
 
 public class MazeCell : MonoBehaviour
@@ -17,7 +18,7 @@ public class MazeCell : MonoBehaviour
     private Renderer _rightRenderer;
     private Renderer _frontRenderer;
     private Renderer _backRenderer;
-
+    
     //enum of the different wall types
     public enum WallType
     {
@@ -30,7 +31,7 @@ public class MazeCell : MonoBehaviour
     //current wall type
     public WallType _currentWallType = WallType.BlackAndWhite;
 
-    public bool IsVisited { get; private set; }
+    public bool IsVisited { get; set; }
 
     public enum Direction { Left, Right, Front, Back }
     public enum CellType { Start, End, Default }
@@ -130,6 +131,23 @@ public class MazeCell : MonoBehaviour
             case CellType.Default:
                 renderer.material = _DefaultMaterial;
                 break;
+        }
+    }
+    
+    public bool HasWall(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.Left:
+                return _leftWall.activeSelf;
+            case Direction.Right:
+                return _rightWall.activeSelf;
+            case Direction.Front:
+                return _frontWall.activeSelf;
+            case Direction.Back:
+                return _backWall.activeSelf;
+            default:
+                return false;
         }
     }
 }

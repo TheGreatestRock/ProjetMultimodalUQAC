@@ -53,29 +53,30 @@ public class MazeGenerator : MonoBehaviour
         SetStartAndEnd();
     }
 
-    private void SetStartAndEnd()
+private void SetStartAndEnd()
+{
+    MazeCell startCell = _mazeGrid[0, 0];
+    MazeCell endCell = _mazeGrid[_mazeWidth - 1, _mazeDepth - 1];
+
+    startCell.SetCellType(MazeCell.CellType.Start);
+    startCell.RemoveWall(MazeCell.Direction.Left);
+    SpawnGameObjectAboveCell(startCell, questionnairePrefab);
+    SpawnGameObjectAboveCell(startCell, TextBoxPrefab);
+
+    endCell.SetCellType(MazeCell.CellType.End);
+    endCell.RemoveWall(MazeCell.Direction.Right);
+    SpawnGameObjectAboveCell(endCell, questionnairePrefab);
+    SpawnGameObjectAboveCell(endCell, TextBoxPrefab);
+
+    // NEW: Find actual path and middle cell
+    List<MazeCell> path = FindPath(startCell, endCell);
+    if (path != null && path.Count > 2)
     {
-        // Start
-        MazeCell startCell = _mazeGrid[0, 0];
-        startCell.SetCellType(MazeCell.CellType.Start);
-        startCell.RemoveWall(MazeCell.Direction.Left);
-        SpawnGameObjectAboveCell(startCell, questionnairePrefab);
-        SpawnGameObjectAboveCell(startCell, TextBoxPrefab);
-
-        // Middle
-        int midX = _mazeWidth / 2;
-        int midZ = _mazeDepth / 2;
-        MazeCell middleCell = _mazeGrid[midX, midZ];
+        MazeCell middleCell = path[path.Count / 2];
         SpawnGameObjectAboveCell(middleCell, questionnairePrefab);
-
-        // End
-        MazeCell endCell = _mazeGrid[_mazeWidth - 1, _mazeDepth - 1];
-        endCell.SetCellType(MazeCell.CellType.End);
-        endCell.RemoveWall(MazeCell.Direction.Right);
-        SpawnGameObjectAboveCell(endCell, questionnairePrefab);
-        SpawnGameObjectAboveCell(endCell, TextBoxPrefab);
-
     }
+}
+
 
     private void SpawnGameObjectAboveCell(MazeCell cell, GameObject prefab)
     {
@@ -217,4 +218,66 @@ public class MazeGenerator : MonoBehaviour
             return;
         }
     }
+    
+    private List<MazeCell> FindPath(MazeCell start, MazeCell end)
+    {
+        Dictionary<MazeCell, MazeCell> cameFrom = new Dictionary<MazeCell, MazeCell>();
+        Queue<MazeCell> queue = new Queue<MazeCell>();
+        HashSet<MazeCell> visited = new HashSet<MazeCell>();
+
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            MazeCell current = queue.Dequeue();
+            if (current == end)
+                break;
+
+            foreach (MazeCell neighbor in GetConnectedNeighbors(current))
+            {
+                if (!visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    cameFrom[neighbor] = current;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+
+        // Reconstruct the path
+        List<MazeCell> path = new List<MazeCell>();
+        MazeCell step = end;
+
+        while (step != start)
+        {
+            path.Add(step);
+            if (!cameFrom.ContainsKey(step)) return new List<MazeCell>(); // No path found
+            step = cameFrom[step];
+        }
+
+        path.Add(start);
+        path.Reverse();
+        return path;
+    }
+    
+    private List<MazeCell> GetConnectedNeighbors(MazeCell cell)
+    {
+        List<MazeCell> neighbors = new List<MazeCell>();
+        int x = Mathf.FloorToInt(cell.transform.position.x / _scaleFactorX);
+        int z = Mathf.FloorToInt(cell.transform.position.z / _scaleFactorZ);
+
+        if (!cell.HasWall(MazeCell.Direction.Right) && x + 1 < _mazeWidth)
+            neighbors.Add(_mazeGrid[x + 1, z]);
+        if (!cell.HasWall(MazeCell.Direction.Left) && x - 1 >= 0)
+            neighbors.Add(_mazeGrid[x - 1, z]);
+        if (!cell.HasWall(MazeCell.Direction.Front) && z + 1 < _mazeDepth)
+            neighbors.Add(_mazeGrid[x, z + 1]);
+        if (!cell.HasWall(MazeCell.Direction.Back) && z - 1 >= 0)
+            neighbors.Add(_mazeGrid[x, z - 1]);
+
+        return neighbors;
+    }
+
+
 }

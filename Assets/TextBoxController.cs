@@ -89,9 +89,24 @@ public class TextBoxController : MonoBehaviour
 
     void ChangeMaterial(string newMatName)
     {
+        if(newMatName == "BlackAndWhite") 
+        {
+            newMatName = "MazeMaterial";
+        }else if(newMatName == "RGB")
+        {
+            newMatName = "MazeMaterial3";
+        }
+        //find the material with this name
+        //if not found, return
+        if (string.IsNullOrEmpty(newMatName)) return;
+        // Load the material from assets
+        Debug.Log("Attempting to load material: " + newMatName);
         Material newMat = Resources.Load<Material>(newMatName);
-        if (newMat == null) return;
-
+        if (newMat == null)
+        {
+            Debug.LogError("Failed to load material: " + newMatName);
+            return;
+        }
         foreach (var obj in Object.FindObjectsByType(System.Type.GetType("MazeCell"), FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             var cell = (MazeCell)obj;

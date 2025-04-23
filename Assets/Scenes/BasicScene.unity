@@ -967,6 +967,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8609062833531869075, guid: fd1ff09d473150246876b8a4cf21227b, type: 3}
+      propertyPath: _mazeDepth
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8609062833531869075, guid: fd1ff09d473150246876b8a4cf21227b, type: 3}
+      propertyPath: _mazeWidth
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8609062833531869075, guid: fd1ff09d473150246876b8a4cf21227b, type: 3}
       propertyPath: TextBoxPrefab
       value: 
       objectReference: {fileID: 4526651147888908462, guid: 6ad69827ad2ef65439e475d3d95d12a9, type: 3}
