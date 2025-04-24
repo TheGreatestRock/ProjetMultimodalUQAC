@@ -11,6 +11,7 @@ public class QuestionnaireManager : MonoBehaviour
     private string[] responseLabels = { "4", "3", "2", "1" }; //{ "Severement", "Moderement", "UnPeu", "PasDuTout" };
     private int totalQuestions = 0;
     private Button saveButton;
+    public bool IsLastQuestionnaire { get; set; } = false;
     
     [SerializeField]
     private GameObject _ssqObject;
@@ -66,6 +67,7 @@ public class QuestionnaireManager : MonoBehaviour
 
     public void OnAnswerSelected(string questionID, int buttonIndex)
     {
+        UserSessionManager.Instance.StartQuestionnaire();
         answers[questionID] = responseLabels[buttonIndex];
         Debug.Log($"Réponse ajoutée : {questionID} - {responseLabels[buttonIndex]}");
 
@@ -147,10 +149,13 @@ public class QuestionnaireManager : MonoBehaviour
         }
 
         SaveAnswersToFile();
+        Debug.Log("Réponses sauvegardées !");
+        UserSessionManager.Instance.EndQuestionnaire();
     }
 
     private void SaveAnswersToFile()
     {
+        
         SurveyData data = new SurveyData
         {
             userId = UserSessionManager.Instance.UserId,

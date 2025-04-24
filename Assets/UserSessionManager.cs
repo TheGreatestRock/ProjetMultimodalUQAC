@@ -7,7 +7,8 @@ public class UserSessionManager : MonoBehaviour
     public static UserSessionManager Instance { get; private set; }
 
     public string UserId { get; private set; }
-    public string[] PossibleVibrations = {"Aucun retour", "Vibration aléatoire", "Vibration rythmique", "Vibration dépendante de la vitesse"};
+    //{"Aucun retour", "Vibration aléatoire", "Vibration rythmique", "Vibration dépendante de la vitesse"};
+    public string[] PossibleVibrations = {"0", "1", "2", "3"};
     public string VibrationType { get; private set; }
     public MazeCell.WallType WallType = MazeCell.WallType.BlackAndWhite;
     
@@ -18,6 +19,7 @@ public class UserSessionManager : MonoBehaviour
     
     public DateTime QuestionnaireStartTime { get; private set; }
     public TimeSpan QuestionnaireDuration { get; private set; }
+    public bool QuestionnaireStarted { get; private set; } = false;
 
     private void Awake()
     {
@@ -53,13 +55,20 @@ public class UserSessionManager : MonoBehaviour
 
     public void StartQuestionnaire()
     {
+        if (QuestionnaireStarted)
+        {
+            Debug.LogWarning("Le questionnaire a déjà été commencé !");
+            return;
+        }
         QuestionnaireStartTime = DateTime.Now;
+        QuestionnaireStarted = true;
         Debug.Log("Questionnaire commencé");
     }
     
     public void EndQuestionnaire()
     {
         QuestionnaireDuration += DateTime.Now - StartTime;
+        QuestionnaireStarted = false;
         Debug.Log($"Questionnaire terminé - Durée: {QuestionnaireDuration.TotalSeconds} secondes");
     }
     

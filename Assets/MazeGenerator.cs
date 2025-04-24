@@ -65,7 +65,7 @@ private void SetStartAndEnd()
 
     endCell.SetCellType(MazeCell.CellType.End);
     endCell.RemoveWall(MazeCell.Direction.Right);
-    SpawnGameObjectAboveCell(endCell, questionnairePrefab);
+    SpawnGameObjectAboveCell(endCell, questionnairePrefab).GetComponent<QuestionnaireManager>().IsLastQuestionnaire = true;
     SpawnGameObjectAboveCell(endCell, TextBoxPrefab);
 
     // NEW: Find actual path and middle cell
@@ -78,11 +78,11 @@ private void SetStartAndEnd()
 }
 
 
-    private void SpawnGameObjectAboveCell(MazeCell cell, GameObject prefab)
+    private GameObject SpawnGameObjectAboveCell(MazeCell cell, GameObject prefab)
     {
-        GameObject obj;
+        GameObject obj = null;
         if (prefab == null || cell == null)
-            return;
+            return null;
         if (prefab == questionnairePrefab)
         {
             Vector3 spawnPosition = cell.transform.position + new Vector3(0, 1.5f, 0); // 1.5f units above the cell
@@ -125,7 +125,7 @@ private void SetStartAndEnd()
                 textBoxController.action3.parameter = "Quit";
             }
         }
-        
+        return obj;
     }
 
 

@@ -76,10 +76,24 @@ public class TextBoxController : MonoBehaviour
                 button.onClick.AddListener(() => ChangeMaterial(action.parameter));
                 break;
             case ButtonActionType.ChangeScene:
-                button.onClick.AddListener(() => SceneManager.LoadScene(action.parameter));
+                button.onClick.AddListener(() =>
+                {
+                    if (Time.timeScale == 0)
+                    {
+                        Time.timeScale = 1; // Resume time if paused
+                    }
+                    SceneManager.LoadScene(action.parameter);
+                });
                 break;
             case ButtonActionType.Quit:
-                button.onClick.AddListener(Application.Quit);
+                button.onClick.AddListener(() =>
+                {
+                    if (Time.timeScale == 0)
+                    {
+                        Time.timeScale = 1; // Resume time if paused
+                    }
+                    Application.Quit();
+                });
                 break;
             case ButtonActionType.Pause:
                 button.onClick.AddListener(PauseGame);
@@ -89,6 +103,10 @@ public class TextBoxController : MonoBehaviour
 
     void ChangeMaterial(string newMatName)
     {
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = 1; // Resume time if paused
+        }
         if(newMatName == "BlackAndWhite") 
         {
             newMatName = "MazeMaterial";
@@ -124,6 +142,10 @@ public class TextBoxController : MonoBehaviour
 
     void PauseGame()
     {
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = 1; // Resume time if paused
+        }
         // Replace with your actual pause function
         Debug.Log("Pause called");
         Time.timeScale = Time.timeScale == 0 ? 1 : 0;
