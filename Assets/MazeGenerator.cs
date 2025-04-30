@@ -65,7 +65,13 @@ private void SetStartAndEnd()
 
     endCell.SetCellType(MazeCell.CellType.End);
     endCell.RemoveWall(MazeCell.Direction.Right);
-    SpawnGameObjectAboveCell(endCell, questionnairePrefab).GetComponent<QuestionnaireManager>().IsLastQuestionnaire = true;
+    GameObject obj = SpawnGameObjectAboveCell(endCell, questionnairePrefab);
+    if (obj == null)
+    {
+        Debug.LogError("Failed to spawn questionnaire prefab above end cell.");
+        return;
+    }
+    obj.GetComponentInChildren<QuestionnaireManager>().IsLastQuestionnaire = true;
     SpawnGameObjectAboveCell(endCell, TextBoxPrefab);
 
     // NEW: Find actual path and middle cell

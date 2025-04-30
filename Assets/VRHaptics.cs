@@ -1,13 +1,17 @@
+using System;
 using System.Collections;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
+using Random = UnityEngine.Random;
 
 public class VRHaptics : MonoBehaviour
 {
     public HapticImpulsePlayer leftHaptic;   // Haptics du contrôleur gauche
     public HapticImpulsePlayer rightHaptic;  // Haptics du contrôleur droit
+    public XROrigin xrOrigin; // XR Origin pour la vitesse du joueur
     public int vibrationMode = 1; // Mode de vibration actif
     public float randomMinDuration = 0.1f; // Durée min vibration aléatoire
     public float randomMaxDuration = 0.5f; // Durée max vibration aléatoire
@@ -16,9 +20,34 @@ public class VRHaptics : MonoBehaviour
 
     private Coroutine vibrationRoutine;
 
-    void Start()
+    
+    //set haptics
+    public void SetHapticFeedback()
     {
-        SetVibrationMode(vibrationMode);
+        if (UserSessionManager.Instance != null)
+        {
+            string vibrationType = UserSessionManager.Instance.VibrationType;
+            switch (vibrationType)
+            {
+                case "Aucun retour":
+                    SetVibrationMode(1);
+                    break;
+                case "Vibration aléatoire":
+                    SetVibrationMode(2);
+                    break;
+                case "Vibration rythmique":
+                    SetVibrationMode(3);
+                    break;
+                case "Vibration dépendante de la vitesse":
+                    SetVibrationMode(4);
+                    break;
+                default:
+                    SetVibrationMode(1);
+                    break;
+            }
+            //log the vibration type
+            Debug.Log("Vibration type: " + vibrationType);
+        }
     }
 
     public void SetVibrationMode(int mode)
@@ -76,7 +105,8 @@ public class VRHaptics : MonoBehaviour
     {
         while (true)
         {
-            float intensity = Mathf.Clamp(moveSpeed / 5.0f, 0.1f, 1.0f);
+            //moving speed of the player
+            float intensity = Mathf.Clamp(xrOrigin.GetComponent<Rigidbody>().velocity.magnitude / moveSpeed, 0f, 1f);
             SendHapticFeedback(leftHaptic, intensity, 0.1f);
             SendHapticFeedback(rightHaptic, intensity, 0.1f);
             yield return new WaitForSeconds(0.1f);

@@ -48,6 +48,13 @@ public class UserSessionManager : MonoBehaviour
     public void StartSession()
     {
         VibrationType = PossibleVibrations[UnityEngine.Random.Range(0, PossibleVibrations.Length)];
+        //set the type
+        //get all VRHaptics in the scene
+        VRHaptics[] haptics = FindObjectsByType<VRHaptics>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var haptic in haptics)
+        {
+            haptic.SetHapticFeedback();
+        }
         StartTime = DateTime.Now;
         Duration = TimeSpan.Zero;
     }
