@@ -98,8 +98,8 @@ private void SetStartAndEnd()
                 Vector3 spawnPosition = cell.transform.position + new Vector3(-1.5f, 1.5f, 0); // 1.5f units above the cell
                 obj = Instantiate(TextBoxPrefab, spawnPosition, Quaternion.identity);
                 textBoxController = obj.GetComponent<TextBoxController>();
-                textBoxController.topText.text = "Welcome to the Maze!, you will need to answer a questionnaire in the middle of the maze and at the end of the maze. \n\n you can choose the wall type you want before starting";
-                textBoxController.button1Text.text = "Black and White";
+                textBoxController.topText.text = "Bienvenue dans le Labyrinthe !Vous devrez répondre à un questionnaire au début, au milieu et à la fin du labyrinthe.\n\n Vous pouvez choisir le type de mur que vous souhaitez avant de commencer.";
+                textBoxController.button1Text.text = "Noir et Blanc";
                 textBoxController.button3Text.text = "RGB";
                 textBoxController.button2.gameObject.SetActive(false);
                 textBoxController.action1.actionType = TextBoxController.ButtonActionType.ChangeMaterial;
@@ -113,10 +113,10 @@ private void SetStartAndEnd()
                 Vector3 spawnPosition = cell.transform.position + new Vector3(1.5f, 1.5f, 0); // 1.5f units above the cell
                 obj = Instantiate(TextBoxPrefab, spawnPosition, Quaternion.identity);
                 textBoxController = obj.GetComponent<TextBoxController>();
-                textBoxController.topText.text = "Congratulations! You have reached the end of the maze. \n\n you can choose to take a break, continue with the next maze or quit the game";
-                textBoxController.button1Text.text = "Take a break";
-                textBoxController.button2Text.text = "Continue";
-                textBoxController.button3Text.text = "Quit";
+                textBoxController.topText.text = "Félicitations ! Vous avez atteint la fin du labyrinthe.\n\n Vous pouvez choisir de faire une pause, de continuer avec le prochain labyrinthe ou de quitter le jeu.";
+                textBoxController.button1Text.text = "Faire une pause";
+                textBoxController.button2Text.text = "Continuer";
+                textBoxController.button3Text.text = "Quitter";
                 textBoxController.action1.actionType = TextBoxController.ButtonActionType.Pause;
                 textBoxController.action1.parameter = "Pause";
                 textBoxController.action2.actionType = TextBoxController.ButtonActionType.ChangeScene;
