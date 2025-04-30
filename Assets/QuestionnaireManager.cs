@@ -5,23 +5,25 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Gère les questionnaires affichés dans le labyrinthe.
+/// </summary>
 public class QuestionnaireManager : MonoBehaviour
 {
-    private Dictionary<string, string> answers = new Dictionary<string, string>();
-    private string[] responseLabels = { "4", "3", "2", "1" }; //{ "Severement", "Moderement", "UnPeu", "PasDuTout" };
-    private int totalQuestions = 0;
-    private Button saveButton;
-    public bool IsLastQuestionnaire { get; set; } = false;
-    
-    [SerializeField]
-    private GameObject _ssqObject;
+    private Dictionary<string, string> answers = new Dictionary<string, string>(); // Réponses collectées
+    private string[] responseLabels = { "4", "3", "2", "1" }; // Étiquettes des réponses
+    private int totalQuestions = 0; // Nombre total de questions
+    private Button saveButton; // Bouton pour sauvegarder les réponses
+    public bool IsLastQuestionnaire { get; set; } = false; // Indique si c'est le dernier questionnaire
 
+    [SerializeField]
+    private GameObject _ssqObject; // Objet contenant les questions
 
     void Start()
     {
         if (_ssqObject == null)
         {
-            Debug.LogWarning("SSQ Object not found");
+            Debug.LogWarning("SSQ Object non trouvé");
             return;
         }
 
@@ -30,7 +32,7 @@ public class QuestionnaireManager : MonoBehaviour
 
         foreach (Transform question in questions)
         {
-            if (question.name.StartsWith("G")) // Identify question groups
+            if (question.name.StartsWith("G")) // Identifier les groupes de questions
             {
                 totalQuestions++;
                 Button[] buttons = question.GetComponentsInChildren<Button>();
@@ -48,14 +50,15 @@ public class QuestionnaireManager : MonoBehaviour
             saveButton = question.GetComponent<Button>();
             saveButton.onClick.AddListener(SubmitSurvey);
             saveButton.interactable = false;
-            Debug.Log($"Save button found: {question.name}");
+            Debug.Log($"Bouton de sauvegarde trouvé : {question.name}");
         }
+
         foreach (var question in questions)
         {
             ResetButtonsOpacity(question.name);
         }
     }
-    
+
     void Update()
     {
         if (_ssqObject)
@@ -65,6 +68,9 @@ public class QuestionnaireManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Enregistre une réponse sélectionnée.
+    /// </summary>
     public void OnAnswerSelected(string questionID, int buttonIndex)
     {
         UserSessionManager.Instance.StartQuestionnaire();
@@ -82,52 +88,9 @@ public class QuestionnaireManager : MonoBehaviour
         CheckSurveyCompletion();
     }
 
-
-    private Button GetSelectedButton(string questionID, int buttonIndex)
-    {
-        GameObject questionObject = _ssqObject.transform.Find(questionID)?.gameObject;
-        if (questionObject != null)
-        {
-            Button[] buttons = questionObject.GetComponentsInChildren<Button>();
-            foreach (Button button in buttons)
-            {
-                var match = Regex.Match(button.name, @"\d+");
-                if (match.Success && int.TryParse(match.Value, out int index) && index-1 == buttonIndex)
-                {
-                    return button;
-                }
-            }
-        }
-        return null;
-    }
-
-    private void SetButtonOpacity(Button button, float opacity, bool isSelected = false)
-    {
-        if (button != null)
-        {
-            Image img = button.GetComponent<Image>();
-            if (img != null)
-            {
-                Color buttonColor = isSelected ? Color.green : Color.grey;
-                buttonColor.a = opacity;
-                img.color = buttonColor;
-            }
-        }
-    }
-
-
-    private void ResetButtonsOpacity(string questionID)
-    {
-        GameObject questionObject = _ssqObject.transform.Find(questionID)?.gameObject;
-        if (questionObject != null)
-        {
-            foreach (Button button in questionObject.GetComponentsInChildren<Button>())
-            {
-                SetButtonOpacity(button, 0.25f);
-            }
-        }
-    }
-
+    /// <summary>
+    /// Vérifie si le questionnaire est complété.
+    /// </summary>
     private void CheckSurveyCompletion()
     {
         if (answers.Count == totalQuestions && saveButton != null)
@@ -140,6 +103,9 @@ public class QuestionnaireManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Soumet le questionnaire et sauvegarde les réponses.
+    /// </summary>
     public void SubmitSurvey()
     {
         if (answers.Count < totalQuestions)
@@ -157,30 +123,30 @@ public class QuestionnaireManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sauvegarde les réponses dans un fichier JSON.
+    /// </summary>
     private void SaveAnswersToFile()
     {
-        
         SurveyData data = new SurveyData
         {
             userId = UserSessionManager.Instance.UserId,
-            vibrationType = UserSessionManager.Instance.VibrationType, 
+            vibrationType = UserSessionManager.Instance.VibrationType,
             wallType = UserSessionManager.Instance.WallType.ToString(),
             answers = new SerializableDictionary(answers),
             duration = UserSessionManager.Instance.Duration.ToString()
         };
-    
+
         string json = JsonUtility.ToJson(data, true);
         string path = Path.Combine(Application.persistentDataPath, "survey_answers.json");
-    
-        // Si le fichier existe déjà, on ajoute les nouvelles réponses
+
         if (File.Exists(path))
         {
-            File.AppendAllText(path, json + "\n"); // Ajoute les données au fichier, avec une nouvelle ligne pour séparer les entrées
+            File.AppendAllText(path, json + "\n");
             Debug.Log($"Réponses ajoutées au fichier : {path}");
         }
         else
         {
-            // Si le fichier n'existe pas, on le crée et écrit les données
             File.WriteAllText(path, json);
             Debug.Log($"Réponses sauvegardées dans le fichier : {path}");
         }
@@ -191,13 +157,67 @@ public class QuestionnaireManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("SSQ Object not found when trying to deactivate it");
+            Debug.LogWarning("SSQ Object non trouvé lors de la désactivation");
         }
     }
 
+    /// <summary>
+    /// Récupère le bouton sélectionné pour une question.
+    /// </summary>
+    private Button GetSelectedButton(string questionID, int buttonIndex)
+    {
+        GameObject questionObject = _ssqObject.transform.Find(questionID)?.gameObject;
+        if (questionObject != null)
+        {
+            Button[] buttons = questionObject.GetComponentsInChildren<Button>();
+            foreach (Button button in buttons)
+            {
+                var match = Regex.Match(button.name, @"\d+");
+                if (match.Success && int.TryParse(match.Value, out int index) && index - 1 == buttonIndex)
+                {
+                    return button;
+                }
+            }
+        }
+        return null;
+    }
 
+    /// <summary>
+    /// Réinitialise l'opacité des boutons pour une question.
+    /// </summary>
+    private void ResetButtonsOpacity(string questionID)
+    {
+        GameObject questionObject = _ssqObject.transform.Find(questionID)?.gameObject;
+        if (questionObject != null)
+        {
+            foreach (Button button in questionObject.GetComponentsInChildren<Button>())
+            {
+                SetButtonOpacity(button, 0.25f);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Définit l'opacité d'un bouton.
+    /// </summary>
+    private void SetButtonOpacity(Button button, float opacity, bool isSelected = false)
+    {
+        if (button != null)
+        {
+            Image img = button.GetComponent<Image>();
+            if (img != null)
+            {
+                Color buttonColor = isSelected ? Color.green : Color.grey;
+                buttonColor.a = opacity;
+                img.color = buttonColor;
+            }
+        }
+    }
 }
 
+/// <summary>
+/// Classe pour sérialiser les réponses.
+/// </summary>
 [System.Serializable]
 public class SerializableDictionary
 {
@@ -224,6 +244,9 @@ public class SerializableDictionary
     }
 }
 
+/// <summary>
+/// Classe pour stocker les données du questionnaire.
+/// </summary>
 [System.Serializable]
 public class SurveyData
 {
