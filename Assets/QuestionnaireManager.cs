@@ -151,6 +151,10 @@ public class QuestionnaireManager : MonoBehaviour
         SaveAnswersToFile();
         Debug.Log("Réponses sauvegardées !");
         UserSessionManager.Instance.EndQuestionnaire();
+        if (IsLastQuestionnaire)
+        {
+            UserSessionManager.Instance.EndSession();
+        }
     }
 
     private void SaveAnswersToFile()

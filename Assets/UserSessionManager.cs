@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using JetBrains.Annotations;
+using UnityEngine.SceneManagement;
 
 public class UserSessionManager : MonoBehaviour
 {
@@ -87,6 +88,7 @@ public class UserSessionManager : MonoBehaviour
         EndTime = DateTime.Now;
         Duration = EndTime - StartTime - QuestionnaireDuration;
         QuestionnaireDuration = TimeSpan.Zero;
+        if (PossibleVibrations.Length == 0) Application.Quit();
         Debug.Log($"Session terminée - Durée: {Duration.TotalSeconds} secondes sans les questionnaires");
     }
 }

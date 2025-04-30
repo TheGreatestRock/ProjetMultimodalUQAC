@@ -83,6 +83,7 @@ public class TextBoxController : MonoBehaviour
                         Time.timeScale = 1; // Resume time if paused
                     }
                     SceneManager.LoadScene(action.parameter);
+                    UserSessionManager.Instance.StartSession();
                 });
                 break;
             case ButtonActionType.Quit:
