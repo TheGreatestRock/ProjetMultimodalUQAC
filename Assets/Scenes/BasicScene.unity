@@ -365,11 +365,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHaptic: {fileID: 441087509}
   rightHaptic: {fileID: 441087508}
+  xrOrigin: {fileID: 441087515}
   vibrationMode: 2
   randomMinDuration: 0.1
   randomMaxDuration: 0.5
   randomPause: 0.5
   moveSpeed: 2
+--- !u!114 &441087515 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 441087506}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441087507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cb9aa70a22847b5925ee5f067c10a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &756192406
 GameObject:
   m_ObjectHideFlags: 0
