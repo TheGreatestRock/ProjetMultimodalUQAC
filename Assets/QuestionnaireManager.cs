@@ -166,7 +166,7 @@ public class QuestionnaireManager : MonoBehaviour
             vibrationType = UserSessionManager.Instance.VibrationType, 
             wallType = UserSessionManager.Instance.WallType.ToString(),
             answers = new SerializableDictionary(answers),
-            Duration = UserSessionManager.Instance.Duration
+            duration = UserSessionManager.Instance.Duration.ToString()
         };
     
         string json = JsonUtility.ToJson(data, true);
@@ -231,5 +231,5 @@ public class SurveyData
     public string vibrationType;
     public string wallType;
     public SerializableDictionary answers;
-    public TimeSpan Duration;
+    public string duration;
 }
