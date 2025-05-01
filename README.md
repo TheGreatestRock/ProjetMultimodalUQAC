@@ -70,7 +70,7 @@ Ce projet a pour objectif de développer une expérience immersive en réalité 
 
 ## Auteur
 
-Ce projet a été développé par Victor Vieux-Melchior dans le cadre d'une étude de recherche sur le cybermalaise en réalité virtuelle pour [l'UQAC](https://www.uqac.ca/)
+Ce projet a été développé par Victor Vieux-Melchior sous la supervision du professeur Pascal E. Fortin dans le cadre d'une étude de recherche sur le cybermalaise en réalité virtuelle pour [l'UQAC](https://www.uqac.ca/)
 
 ## Remarques
 
