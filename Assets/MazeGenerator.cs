@@ -147,6 +147,7 @@ public class MazeGenerator : MonoBehaviour
 
     /// <summary>
     /// Génère le labyrinthe en supprimant les murs entre les cellules connectées.
+    /// L'algorithme utilisé est une variante de l'algorithme de Prim.
     /// </summary>
     private IEnumerator GenerateMaze(MazeCell previousCell, MazeCell currentCell)
     {
